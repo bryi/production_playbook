@@ -1,0 +1,70 @@
+---
+    - name: Install detected ruby version
+      command: rvm install {{ detected_ruby.stdout }}
+
+    - name: Use installed ruby version
+      command: rvm alias create default {{ detected_ruby.stdout }}
+
+    - name: Install ruby bundler
+      shell: rvm default && gem install bundler
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+    
+    - name: Install needed bundles
+      command: bundle install -j20 --retry 3 --path=vendor/bundle
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+    
+    - name: Detect secret key base
+      command: bundle exec rake secret
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: SECRET_KEY_BASE
+    
+    - name: Create Rails Database
+      command: bundle exec rake db:create
+      ignore_errors: yes
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['production'] }}"
+      run_once: true
+        
+    - name: Migrate Rails Database
+      command: bundle exec rake db:migrate
+      ignore_errors: yes
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['production'] }}"
+      run_once: true  
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
+
+    - name: Seed Rails Database
+      command: bundle exec rake db:seed
+      ignore_errors: yes
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['production'] }}"
+      run_once: true
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
+
+    - name: Precompile Assets
+      command: bundle exec rake assets:precompile
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'

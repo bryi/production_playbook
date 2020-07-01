@@ -1,0 +1,40 @@
+---
+    - name: Detect needed ruby version
+      command: cat .ruby-version
+      args:
+        chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
+      register: detected_ruby
+
+    - name: Export Database Name to environments
+      shell: cat .env | grep DATABASE_NAME | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: DATABASE_NAME
+    
+    - name: Export Database user to environments
+      shell: cat .env | grep DATABASE_USER | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: DATABASE_USER
+    
+    - name: Export Database passwd to environments
+      shell: cat .env | grep DATABASE_PASSWORD | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: DATABASE_PASSWORD
+
+    - name: Export Database URL to environments
+      shell: cat .env | grep DATABASE_HOST | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: DATABASE_HOST
+
+    - name: Export Redis URL to environments
+      shell: cat .env | grep REDIS_HOST | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: REDIS_HOST
+
+    - name: Detect ip-address of host
+      shell: ip a | grep ens160 | grep inet | awk '{print $2}' | awk -F "/" '{print $1}'
+      register: host_ip

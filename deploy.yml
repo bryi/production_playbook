@@ -1,0 +1,69 @@
+---
+- hosts: localhost
+  become: true
+
+  pre_tasks:
+
+    - name: Install epel-release to RedHat OS
+      raw: yum install epel-release -y
+      when: ansible_distribution == 'CentOS'
+
+    - name: Check or install needed Python versions on RedHat OS
+      raw: yum install python python-pip python3 python3-pip -y
+      when: ansible_distribution == 'CentOS'
+
+    - name: Check or install needed Python versions on Debian/Ubuntu OS
+      raw: sudo apt-get install python python-pip python3 python3-pip -y
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- hosts: production
+  become: true
+
+  pre_tasks:
+
+    - name: Import Prereq tasks
+      include: prereq_tasks.yml
+
+    - name: Check installed rvm
+      block:
+  
+      - name: Check installed rvm
+        command: rvm list
+      
+      rescue:
+      - name: Include install rvm tasks
+        include: install_rvm.yml
+      
+  tasks:
+      
+    - name: Copy Application files to remote hosts
+      synchronize:
+        src: '{{ APPLICATION_SOURCE }}'
+        dest: '{{ APPLICATION_DEST }}'
+    
+    - name: Export variables tasks
+      include: export_variables.yml
+
+    - name: Install application
+      include: install_app.yml
+
+    - name: Add host to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: 192.168.1.98    iam.ctm.ru
+    
+    - name: Add ip address to Prometheus Exporter
+      replace:
+        path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
+        regexp: 'PROMETHEUS_HOST'
+        replace: '{{ host_ip.stdout }}'
+
+    - name: Copy and start systemd files
+      include: systemd.yml
+
+    - debug:
+        var: service_output.stdout
+
+
+
+

@@ -1,0 +1,77 @@
+---
+
+    - name: Rename systemd template to application name
+      command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/app_template.service /etc/systemd/system/{{ APPLICATION_NAME }}.service'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+    - name: Configure application name in systemd file
+      replace:
+        path: '/etc/systemd/system/{{ APPLICATION_NAME }}.service'
+        regexp: 'APP_NAME'
+        replace: '{{ APPLICATION_NAME }}'
+
+    - name: Configure application destination in systemd file
+      replace:
+        path: '/etc/systemd/system/{{ APPLICATION_NAME }}.service'
+        regexp: 'APP_DEST'
+        replace: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+    - name: Configure application destination in prometheus exporter systemd file
+      replace:
+        path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/prom_exp.service'
+        regexp: 'APP_DEST'
+        replace: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+    - name: Move prometheus exporter systemd file to /etc/systemd
+      command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/prom_exp.service /etc/systemd/system/prom_exp.service'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+    - name: Update systemd config in system
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start prometheus_exporter systemd service
+      systemd:
+        state: started
+        name: prom_exp
+        enabled: yes 
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_SERVE_STATIC_FILES: "{{ RAILS_SERVE_STATIC_FILES }}" 
+
+    - name: Enable and start application systemd service
+      systemd:
+        state: started
+        name: '{{ APPLICATION_NAME }}'
+        enabled: yes 
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_SERVE_STATIC_FILES: "{{ RAILS_SERVE_STATIC_FILES }}"
+
+    - name: Check application systemd service status
+      shell: systemctl status {{ APPLICATION_NAME }} | grep Active
+      ignore_errors: yes
+      register: service_output
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_SERVE_STATIC_FILES: "{{ RAILS_SERVE_STATIC_FILES }}"

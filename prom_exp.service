@@ -1,0 +1,16 @@
+[Unit]
+Description=prometheus_exporter
+Requires=network.target
+ 
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=APP_DEST
+ExecStart=/usr/bin/bash -lc 'bundle exec prometheus_exporter -b 0.0.0.0'
+TimeoutSec=30
+RestartSec=15s
+Restart=always
+ 
+[Install]
+WantedBy=multi-user.target

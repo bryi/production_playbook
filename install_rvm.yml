@@ -1,0 +1,28 @@
+---      
+      - name: Install requirements for rvm to RedHat OS
+        yum: name={{ item }} state=latest update_cache=yes
+        loop: [ 'gnupg', 'gcc-c++', 'patch', 'readline', 'readline-devel', 'zlib', 'zlib-devel', 'libffi-devel', 'openssl-devel', 'make', 'bzip2', 'autoconf', 'automake', 'libtool', 'bison', 'sqlite-devel' ]
+        when: ansible_distribution == 'CentOS'
+
+      - name: Install requirements for rvm to Ubuntu/Debian OS
+        apt: name={{ item }} state=latest update_cache=yes
+        loop: [ 'gnupg', 'gcc-c++', 'patch', 'readline', 'readline-devel', 'zlib', 'zlib-devel', 'libffi-devel', 'openssl-devel', 'make', 'bzip2', 'autoconf', 'automake', 'libtool', 'bison', 'sqlite-devel' ]
+        when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+      - name: Import GPG Keys
+        shell: curl -sSL https://rvm.io/mpapis.asc | gpg2 --import -
+      
+      - name: Import second GPG Keys
+        shell: curl -sSL https://rvm.io/pkuczynski.asc | gpg2 --import -
+
+      - name: install rvm 
+        shell: curl -L get.rvm.io | bash -s stable
+
+      - name: source rvm environments 
+        shell: source /etc/profile.d/rvm.sh
+
+      - name: reload rvm
+        command: rvm reload
+
+      - name: verify rvm dependency
+        command: rvm requirements run
