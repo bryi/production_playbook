@@ -51,13 +51,21 @@
       lineinfile:
         path: /etc/hosts
         line: 192.168.1.98    iam.ctm.ru
+
+    - name: Check existing of prometheus exporter config file
+      command: 'cat {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
+      ignore_errors: yes
+      register: checkkey
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Add ip address to Prometheus Exporter
       replace:
         path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
         regexp: 'PROMETHEUS_HOST'
         replace: '{{ host_ip.stdout }}'
-
+      when: checkkey.changed
+      
     - name: Copy and start systemd files
       include: systemd.yml
 
