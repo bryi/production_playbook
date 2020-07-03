@@ -76,9 +76,14 @@
     - name: Check prometheus metrics
       uri:
         url: http://localhost:9394/metrics
+    
+    - name: Configure Nginx load balancer on RedHat OS
+      include: configure_lb.yml
+      when: CONFIGURE_NGINX_LOAD_BALANCER |bool
 
     - debug:
-        var: service_output.stdout
+        msg: Application successfully deployed
+      when: service_output.changed
 
 
 

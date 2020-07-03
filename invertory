@@ -6,6 +6,7 @@ RAILS_SERVE_STATIC_FILES='true'
 APPLICATION_NAME='ctmadm' 
 APPLICATION_SOURCE='/home/ctm/production-github/production/{{ APPLICATION_NAME }}/{{ APPLICATION_NAME }}'
 APPLICATION_DEST='/home/ctm'
+CONFIGURE_NGINX_LOAD_BALANCER: 'false'
 
 [localhost]
 127.0.0.1
