@@ -1,10 +1,4 @@
 ---
-    - name: Install default ruby version [2.6.5]
-      command: rvm install ruby-2.6.5
-
-    - name: Set installed ruby version as default
-      command: rvm alias create default ruby-2.6.5
-      ignore_errors: yes
 
     - name: Install detected ruby version
       command: rvm install {{ detected_ruby.stdout }}
