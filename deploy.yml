@@ -70,10 +70,12 @@
       include: systemd.yml
 
     - name: Run simple application healthchecks
-      command: curl localhost:{{ DEPLOYMENT_PORT }}
+      uri:
+        url: http://localhost:{{ DEPLOYMENT_PORT }}
       
     - name: Check prometheus metrics
-      command: curl localhost:9394/metrics
+      uri:
+        url: http://localhost:9394/metrics
 
     - debug:
         var: service_output.stdout
