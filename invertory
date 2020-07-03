@@ -1,7 +1,6 @@
 [all:vars]
 ansible_user='root'
-application_name='redmine'
-DEPLOYMENT_PORT='3001'
+DEPLOYMENT_PORT='3000'
 RAILS_ENV='production'
 RAILS_SERVE_STATIC_FILES='true'
 APPLICATION_NAME='ctmadm' 

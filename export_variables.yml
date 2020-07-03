@@ -1,6 +1,7 @@
 ---
     - name: Detect needed ruby version
       command: cat .ruby-version
+      ignore_errors: yes
       args:
         chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
       register: detected_ruby
