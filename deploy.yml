@@ -76,14 +76,35 @@
     - name: Check prometheus metrics
       uri:
         url: http://localhost:9394/metrics
-    
-    - name: Configure Nginx load balancer on RedHat OS
-      include: configure_lb.yml
-      when: CONFIGURE_NGINX_LOAD_BALANCER |bool
 
     - debug:
         msg: Application successfully deployed
       when: service_output.changed
+
+- hosts: loadbalancers
+  become: true
+
+  pre_tasks:
+
+    - name: Install nginx on RedHat OS
+      yum: name={{ item }} state=latest update_cache=yes
+      loop: [ 'nginx' ]
+      when: 
+        - ansible_distribution == 'CentOS'
+        - CONFIGURE_NGINX_LOAD_BALANCER |bool
+
+    - name: Install nginx on Ubuntu/Debian OS
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'nginx' ]
+      when: 
+        - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+        - CONFIGURE_NGINX_LOAD_BALANCER |bool
+    
+  tasks:
+
+    - name: Import loadbalancer config playbook
+      include: configure_lb.yml
+
 
 
 
