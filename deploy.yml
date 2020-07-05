@@ -76,4 +76,3 @@
     - debug:
         msg: Application successfully deployed
       when: service_output.changed
-
