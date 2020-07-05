@@ -59,7 +59,7 @@
         path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
         regexp: 'PROMETHEUS_HOST'
         replace: '{{ host_ip.stdout }}'
-      when: checkkey | bool
+      when: checkkey is not failed
       
     - name: Copy and start systemd files
       include: systemd.yml
@@ -71,7 +71,7 @@
     - name: Check prometheus metrics
       uri:
         url: http://localhost:9394/metrics
-      when: checkkey | bool
+      when: checkkey is not failed
 
     - debug:
         msg: Application successfully deployed

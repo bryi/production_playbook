@@ -27,14 +27,14 @@
       command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/prom_exp.service /etc/systemd/system/prom_exp.service'
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-      when: checkkey | bool
+      when: checkkey is not failed
 
     - name: Configure application destination in prometheus exporter systemd file
       replace:
         path: '/etc/systemd/system/prom_exp.service'
         regexp: 'APP_DEST'
         replace: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-      when: checkkey | bool
+      when: checkkey is not failed
 
     - name: Update systemd config in system
       systemd:
@@ -45,7 +45,7 @@
         state: started
         name: prom_exp
         enabled: yes 
-      when: checkkey | bool 
+      when: checkkey is not failed 
 
     - name: Enable and start application systemd service
       systemd:
