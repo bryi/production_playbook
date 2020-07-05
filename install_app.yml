@@ -19,11 +19,6 @@
       command: bundle install -j20 --retry 3 --path=vendor/bundle
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-
-    - name: Install webpacker
-      command: bundle exec rails webpacker:install
-      args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Detect secret key base
       command: bundle exec rake secret
@@ -83,6 +78,19 @@
         RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Precompile Assets
-      command: bundle exec rake assets:precompile
-      args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      retries: 3
+      delay: 3
+      register: result_assets
+      until: result_assets | bool
+      block:
+  
+      - name: Precompile Assets
+        command: bundle exec rake assets:precompile
+        args:
+          chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      
+      rescue:
+      - name: Install webpacker
+        command: bundle exec rails webpacker:install
+        args:
+          chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
