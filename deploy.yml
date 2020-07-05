@@ -47,11 +47,6 @@
     - name: Install application
       include: install_app.yml
 
-    - name: Add host to /etc/hosts
-      lineinfile:
-        path: /etc/hosts
-        line: 192.168.1.98    iam.ctm.ru
-
     - name: Check existing of prometheus exporter config file
       command: 'cat {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
       ignore_errors: yes
@@ -64,7 +59,7 @@
         path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
         regexp: 'PROMETHEUS_HOST'
         replace: '{{ host_ip.stdout }}'
-      when: checkkey.changed
+      when: checkkey | bool
       
     - name: Copy and start systemd files
       include: systemd.yml
@@ -76,36 +71,9 @@
     - name: Check prometheus metrics
       uri:
         url: http://localhost:9394/metrics
+      when: checkkey | bool
 
     - debug:
         msg: Application successfully deployed
       when: service_output.changed
-
-- hosts: loadbalancers
-  become: true
-
-  pre_tasks:
-
-    - name: Install nginx on RedHat OS
-      yum: name={{ item }} state=latest update_cache=yes
-      loop: [ 'nginx' ]
-      when: 
-        - ansible_distribution == 'CentOS'
-        - CONFIGURE_NGINX_LOAD_BALANCER |bool
-
-    - name: Install nginx on Ubuntu/Debian OS
-      apt: name={{ item }} state=latest update_cache=yes
-      loop: [ 'nginx' ]
-      when: 
-        - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-        - CONFIGURE_NGINX_LOAD_BALANCER |bool
-    
-  tasks:
-
-    - name: Import loadbalancer config playbook
-      include: configure_lb.yml
-
-
-
-
 

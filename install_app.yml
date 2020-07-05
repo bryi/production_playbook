@@ -19,6 +19,11 @@
       command: bundle install -j20 --retry 3 --path=vendor/bundle
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+    - name: Install webpacker
+      command: bundle exec rails webpacker:install
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Detect secret key base
       command: bundle exec rake secret
