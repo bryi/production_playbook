@@ -78,17 +78,17 @@
         RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Precompile Assets
-      retries: 3
-      delay: 3
-      register: result_assets
-      until: result_assets | bool
       block:
   
       - name: Precompile Assets
         command: bundle exec rake assets:precompile
         args:
           chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-      
+        retries: 3
+        delay: 3
+        register: result_assets
+        until: result_assets is not failed
+        
       rescue:
       - name: Install webpacker
         command: bundle exec rails webpacker:install
