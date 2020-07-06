@@ -6,9 +6,29 @@
 
 - name: Extract archive files
   unarchive:
-    src: node_exporter-* 
+    src: '{{ APPLICATION_DEST }}/node_exporter-1.0.1.linux-amd64.tar.gz'
     dest: "{{ APPLICATION_DEST }}"
 
 - name: Create user for node exporter
   user:
     name: nodeusr
+
+- name: Move node exporter files to bin
+  command: 'mv {{ APPLICATION_DEST }}/node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/'
+  args:
+    chdir: '{{ APPLICATION_DEST }}'
+
+- name: Move node_exporter.service to /etc/systemd
+  command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/node_exporter.service /etc/systemd/system'
+  args:
+    chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+
+- name: Update systemd config in system
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start node_exporter systemd service
+  systemd:
+    state: started
+    name: node_exporter
+    enabled: yes  
