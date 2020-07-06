@@ -35,20 +35,3 @@
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: REDIS_HOST
-
-    - name: Detect ip-address of host
-      shell: ip a | grep ens160 | grep inet | awk '{print $2}' | awk -F "/" '{print $1}'
-      register: host_ip
-
-    - name: Calculate production hosts in invertory file
-      debug: msg="{{ item }}" 
-      with_items:
-        - "{{ groups['production'] | length }}"
-      register: PRODUCTION_HOSTS
-
-    - name: Save ip address of first production host to variable
-      debug: msg="{{ item }}" 
-      with_items:
-        - "{{ groups['production'][1] }}"
-      register: PRODUCTION_HOST_1
-      when: PRODUCTION_HOSTS | int >= 1

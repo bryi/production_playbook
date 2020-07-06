@@ -2,6 +2,13 @@
 - hosts: localhost
   become: true
 
+  vars:
+    PRODUCTION_HOST_1: "{{ groups['production'][0] }}"
+    PRODUCTION_HOST_2: "{{ groups['production'][1] }}"
+    PRODUCTION_HOST_3: "{{ groups['production'][2] }}"
+    PRODUCTION_HOST_4: "{{ groups['production'][3] }}"
+    PRODUCTION_HOST_5: "{{ groups['production'][4] }}"
+
   pre_tasks:
 
     - name: Install epel-release to RedHat OS
@@ -53,13 +60,6 @@
       register: checkkey
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-    
-    - name: Add ip address to Prometheus Exporter
-      replace:
-        path: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
-        regexp: 'PROMETHEUS_HOST'
-        replace: '{{ host_ip.stdout }}'
-      when: checkkey is not failed
       
     - name: Copy and start systemd files
       include: systemd.yml
