@@ -51,4 +51,4 @@
       with_items:
         - "{{ groups['production'][1] }}"
       register: PRODUCTION_HOST_1
-      when: PRODUCTION_HOSTS.stdout >= 1
+      when: PRODUCTION_HOSTS | int >= 1
