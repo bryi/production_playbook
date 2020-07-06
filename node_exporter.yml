@@ -2,12 +2,12 @@
 - name: Get latest version of node exporter
   get_url:
     url: https://github.com/prometheus/node_exporter/releases/download/v1.0.1/node_exporter-1.0.1.linux-amd64.tar.gz
-    dest: {{ APPLICATION_DEST }}
+    dest: "{{ APPLICATION_DEST }}"
 
 - name: Extract archive files
   unarchive:
     src: node_exporter-* 
-    dest: {{ APPLICATION_DEST }}
+    dest: "{{ APPLICATION_DEST }}"
 
 - name: Create user for node exporter
   user:
