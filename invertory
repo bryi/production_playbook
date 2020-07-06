@@ -11,6 +11,6 @@ APPLICATION_DEST='/home/ctm'
 127.0.0.1
 
 [production]
-prod1
-prod2
-prod3
+10.0.0.131
+10.0.0.145
+10.0.0.130
