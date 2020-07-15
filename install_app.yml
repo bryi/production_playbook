@@ -21,7 +21,7 @@
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Detect secret key base
-      command: RAILS_ENV=production bundle exec rake secret
+      shell: RAILS_ENV=production bundle exec rake secret
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
