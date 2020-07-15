@@ -25,6 +25,14 @@
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
+      environment:
+        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
+        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
+        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
+        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
+        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
     
     - name: Create Rails Database
       command: bundle exec rake db:create
