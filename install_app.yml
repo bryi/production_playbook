@@ -21,18 +21,10 @@
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Detect secret key base
-      command: bundle exec rake secret
+      command: RAILS_ENV=production bundle exec rake secret
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
-      environment:
-        DATABASE_NAME: "{{ DATABASE_NAME.stdout }}"
-        DATABASE_USER: "{{ DATABASE_USER.stdout }}"
-        DATABASE_PASSWORD: "{{ DATABASE_PASSWORD.stdout }}"
-        DATABASE_HOST: "{{ DATABASE_HOST.stdout }}"
-        REDIS_HOST: "{{ REDIS_HOST.stdout }}"
-        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
-        RAILS_ENV: "{{ RAILS_ENV }}"
     
     - name: Create Rails Database
       command: bundle exec rake db:create
