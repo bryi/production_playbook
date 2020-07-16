@@ -25,6 +25,12 @@
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
+
+    - name: Add detected secret key to .bashrc
+      lineinfile:
+        path: /root/.bashrc
+        line: "export SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
+        create: yes
     
     - name: Create Rails Database
       command: bundle exec rake db:create
