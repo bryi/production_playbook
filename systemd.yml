@@ -52,14 +52,23 @@
         state: started
         name: '{{ APPLICATION_NAME }}'
         enabled: yes 
+      environment:
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Restart application systemd service
       systemd:
         state: restarted
         name: '{{ APPLICATION_NAME }}'
         enabled: yes 
+      environment:
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Check application systemd service status
       shell: systemctl status {{ APPLICATION_NAME }} | grep Active
       ignore_errors: yes
       register: service_output
+      environment:
+        SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
+        RAILS_ENV: "{{ RAILS_ENV }}"
