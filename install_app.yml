@@ -81,7 +81,7 @@
       block:
   
       - name: Precompile Assets
-        command: bundle exec rake assets:precompile
+        shell: RAILS_ENV=production bundle exec rake assets:precompile
         args:
           chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
         retries: 3
