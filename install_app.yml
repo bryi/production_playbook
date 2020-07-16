@@ -42,6 +42,7 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_MASTER_KEY: "{{ SECRET_KEY_BASE.stdout }}"
         
     - name: Migrate Rails Database
       command: bundle exec rake db:migrate
@@ -59,6 +60,7 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_MASTER_KEY: "{{ SECRET_KEY_BASE.stdout }}"
 
     - name: Seed Rails Database
       command: bundle exec rake db:seed
@@ -76,6 +78,7 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
+        RAILS_MASTER_KEY: "{{ SECRET_KEY_BASE.stdout }}"
 
     - name: Precompile Assets
       block:
