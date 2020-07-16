@@ -27,9 +27,9 @@
       register: SECRET_KEY_BASE
 
     - name: Detect rails master key
-      shell: cat config/master.key
+      command: cat config/master.key
       args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+        chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
       register: RAILS_MASTER_KEY
     
     - name: Create Rails Database
