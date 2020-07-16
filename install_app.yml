@@ -25,12 +25,6 @@
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
-
-    - name: Detect rails master key
-      command: 'cat {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/master.key'
-      args:
-        chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
-      register: RAILS_MASTER_KEY
     
     - name: Create Rails Database
       command: bundle exec rake db:create
@@ -48,7 +42,6 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
-        RAILS_MASTER_KEY: "{{ RAILS_MASTER_KEY.stdout }}"
         
     - name: Migrate Rails Database
       command: bundle exec rake db:migrate
@@ -66,7 +59,6 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
-        RAILS_MASTER_KEY: "{{ RAILS_MASTER_KEY.stdout }}"
 
     - name: Seed Rails Database
       command: bundle exec rake db:seed
@@ -84,7 +76,6 @@
         REDIS_HOST: "{{ REDIS_HOST.stdout }}"
         SECRET_KEY_BASE: "{{ SECRET_KEY_BASE.stdout }}"
         RAILS_ENV: "{{ RAILS_ENV }}"
-        RAILS_MASTER_KEY: "{{ RAILS_MASTER_KEY.stdout }}"
 
     - name: Precompile Assets
       block:
