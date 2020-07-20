@@ -20,16 +20,6 @@
     - name: Install yarn repo pubkey
       shell: rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
 
-    - name: Remove nodejs on RedHat OS if installed
-      yum: name={{ item }} state=absent
-      loop: [ 'nodejs', 'npm' ]
-      when: ansible_distribution == 'CentOS'
-
-    - name: Remove nodejs on Debian/Ubuntu OS if installed
-      apt: name={{ item }} state=absent
-      loop: [ 'nodejs', 'npm' ]
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
     - name: Install required system packages to CentOS 
       yum: name={{ item }} state=latest update_cache=yes
       loop: [ 'git', 'libxml2-devel', 'postgresql', 'postgresql-libs', 'postgresql-devel', 'libxslt-devel', 'tzdata', 'nodejs', 'yarn' ]
