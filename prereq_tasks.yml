@@ -64,3 +64,8 @@
         user: "{{ rails_user }}"
         key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
         state: present
+
+    - name: restart servers
+      ignore_errors: true
+      reboot:
+        reboot_timeout: 600
