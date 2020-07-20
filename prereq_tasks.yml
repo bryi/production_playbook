@@ -46,3 +46,21 @@
         name: firewalld
         enabled: no 
       when: ansible_distribution == 'CentOS'
+
+    - name: Ensure a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Add a new user
+      user:
+        name: "{{ rails_user }}"
+        shell: /bin/bash
+        password: "{{ rails_user_password | password_hash('sha512') }}"
+        groups: "sudo"
+
+    - name: Deploy SSH Key
+      authorized_key:
+        user: "{{ rails_user }}"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        state: present

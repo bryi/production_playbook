@@ -4,8 +4,8 @@ Requires=network.target
  
 [Service]
 Type=simple
-User=root
-Group=root
+User=rubyworker
+Group=wheel
 WorkingDirectory=APP_DEST
 ExecStart=/usr/bin/bash -lc 'export $(cat .env | xargs) && RAILS_SERVE_STATIC_FILES=true RAILS_ENV=production bundle exec rails server -b 0.0.0.0 -p DEPLOYMENT_PORT'
 TimeoutSec=30
