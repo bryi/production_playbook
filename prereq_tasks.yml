@@ -67,5 +67,8 @@
 
     - name: restart servers
       ignore_errors: true
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups['production'] }}"
+      run_once: true
       reboot:
         reboot_timeout: 600
