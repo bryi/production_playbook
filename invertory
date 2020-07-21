@@ -2,6 +2,7 @@
 ansible_user='root'
 rails_user='rubyworker'
 rails_user_password='goruby'
+ansible_become_password='rails_user_password'
 DEPLOYMENT_PORT='3000'
 RAILS_ENV='production'
 RAILS_SERVE_STATIC_FILES='true'
