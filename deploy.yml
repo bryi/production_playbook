@@ -31,8 +31,6 @@
       
 - hosts: production
   become: yes
-  become_user: "{{ rails_user }}"
-  become_method: sudo
 
   tasks:
   
@@ -45,8 +43,8 @@
       rescue:
       - name: Include install rvm tasks
         become: true
-        become_user: "{{ rails_user }}"
-        become_method: sudo
+        remote_user: "{{ rails_user }}"
+        become_user: "{{ ansible_user }}"
         include: install_rvm.yml
       
     - name: Copy Application files to remote hosts
@@ -59,8 +57,8 @@
 
     - name: Install application
       become: true
-      become_user: "{{ rails_user }}"
-      become_method: sudo
+      remote_user: "{{ rails_user }}"
+      become_user: "{{ ansible_user }}"
       include: install_app.yml
 
     - name: Check existing of prometheus exporter config file
@@ -72,8 +70,8 @@
       
     - name: Copy and start systemd files
       become: true
-      become_user: "{{ rails_user }}"
-      become_method: sudo
+      remote_user: "{{ rails_user }}"
+      become_user: "{{ ansible_user }}"
       include: systemd.yml
 
     - name: Run simple application healthchecks
@@ -87,8 +85,8 @@
 
     - name: Add prometheus node_exporter to production host
       become: true
-      become_user: "{{ rails_user }}"
-      become_method: sudo
+      remote_user: "{{ rails_user }}"
+      become_user: "{{ ansible_user }}"
       include: node_exporter.yml
       when: 
         - checkkey is not failed
