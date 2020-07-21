@@ -25,7 +25,6 @@
 
 - hosts: production
   become: true
-  become_user: "{{ rails_user }}"
 
   pre_tasks:
 
@@ -42,6 +41,10 @@
       - name: Include install rvm tasks
         include: install_rvm.yml
       
+- hosts: production
+  become: true
+  become_user: "{{ rails_user }}"
+
   tasks:
       
     - name: Copy Application files to remote hosts
