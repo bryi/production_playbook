@@ -38,6 +38,7 @@
       block:
   
       - name: Check installed rvm
+        remote_user: "{{ rails_user }}"
         command: rvm list
       
       rescue:
@@ -48,11 +49,13 @@
         include: install_rvm.yml
       
     - name: Copy Application files to remote hosts
+      remote_user: "{{ rails_user }}"
       synchronize:
         src: '{{ APPLICATION_SOURCE }}'
         dest: '{{ APPLICATION_DEST }}'
     
     - name: Export variables tasks
+      remote_user: "{{ rails_user }}"
       include: export_variables.yml
 
     - name: Install application
@@ -62,6 +65,7 @@
       include: install_app.yml
 
     - name: Check existing of prometheus exporter config file
+      remote_user: "{{ rails_user }}"
       command: 'cat {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
       ignore_errors: yes
       register: checkkey
@@ -75,10 +79,12 @@
       include: systemd.yml
 
     - name: Run simple application healthchecks
+      remote_user: "{{ rails_user }}"
       uri:
         url: http://localhost:{{ DEPLOYMENT_PORT }}
       
     - name: Check prometheus metrics
+      remote_user: "{{ rails_user }}"
       uri:
         url: http://localhost:9394/metrics
       when: checkkey is not failed
