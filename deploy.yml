@@ -54,6 +54,12 @@
         src: '{{ APPLICATION_SOURCE }}'
         dest: '{{ APPLICATION_DEST }}'
     
+    - name: Change file ownership, group and permissions
+      file:
+        path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
+        owner: "{{ rails_user }}"
+        group: wheel
+
     - name: Export variables tasks
       remote_user: "{{ rails_user }}"
       include: export_variables.yml
