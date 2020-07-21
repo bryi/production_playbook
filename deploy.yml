@@ -32,7 +32,6 @@
 - hosts: production
   become: yes
   become_user: "{{ rails_user }}"
-  ansible_become_password: "{{ rails_user_password }}"
 
   tasks:
   
