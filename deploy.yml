@@ -43,6 +43,7 @@
       
       rescue:
       - name: Include install rvm tasks
+        become: true
         include: install_rvm.yml
       
     - name: Copy Application files to remote hosts
@@ -54,6 +55,7 @@
       include: export_variables.yml
 
     - name: Install application
+      become: true
       include: install_app.yml
 
     - name: Check existing of prometheus exporter config file
@@ -64,6 +66,7 @@
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       
     - name: Copy and start systemd files
+      become: true
       include: systemd.yml
 
     - name: Run simple application healthchecks
@@ -76,6 +79,7 @@
       when: checkkey is not failed
 
     - name: Add prometheus node_exporter to production host
+      become: true
       include: node_exporter.yml
       when: 
         - checkkey is not failed
