@@ -55,7 +55,7 @@
         name: "{{ rails_user }}"
         shell: /bin/bash
         password: "{{ rails_user_password | password_hash('sha512') }}"
-        groups: "sudo"
+        groups: "wheel"
 
     - name: Deploy SSH Key
       authorized_key:
