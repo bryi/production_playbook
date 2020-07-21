@@ -28,12 +28,7 @@
 
     - name: Import Prereq tasks
       include: prereq_tasks.yml
-      
-- hosts: production
-  become: yes
 
-  tasks:
-  
     - name: Check installed rvm
       block:
   
@@ -47,6 +42,11 @@
         remote_user: "{{ rails_user }}"
         become_user: "{{ ansible_user }}"
         include: install_rvm.yml
+      
+- hosts: production
+  become: yes
+
+  tasks:
       
     - name: Copy Application files to remote hosts
       remote_user: "{{ rails_user }}"
