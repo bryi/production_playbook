@@ -30,8 +30,9 @@
       include: prereq_tasks.yml
       
 - hosts: production
-  become: true
+  become: yes
   become_user: "{{ rails_user }}"
+  ansible_become_password: "{{ rails_user_password }}"
 
   tasks:
   
