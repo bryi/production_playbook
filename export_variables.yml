@@ -1,4 +1,9 @@
 ---
+    - name: source rvm environments 
+      shell: source /etc/profile.d/rvm.sh
+      args:
+        chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
+
     - name: Detect needed ruby version
       command: cat .ruby-version
       ignore_errors: yes
