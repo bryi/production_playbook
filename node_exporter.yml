@@ -11,28 +11,33 @@
     dest: "{{ APPLICATION_DEST }}"
     remote_src: yes
     list_files: yes
-    owner: root
-    group: root
+    owner: "{{ rails_user }}"
+    group: wheel
 
 - name: Create user for node exporter
+  become: true
   user:
     name: nodeusr
 
 - name: Move node exporter files to bin
+  become: true
   command: 'mv {{ APPLICATION_DEST }}/node_exporter-1.0.1.linux-amd64/node_exporter /usr/local/bin/'
   args:
     chdir: '{{ APPLICATION_DEST }}'
 
 - name: Move node_exporter.service to /etc/systemd
+  become: true
   command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/node_exporter.service /etc/systemd/system'
   args:
     chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
 
 - name: Update systemd config in system
+  become: true
   systemd:
     daemon_reload: yes
 
 - name: Enable and start node_exporter systemd service
+  become: true
   systemd:
     state: started
     name: node_exporter

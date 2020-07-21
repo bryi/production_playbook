@@ -2,11 +2,13 @@
       - name: Install requirements for rvm to RedHat OS
         yum: name={{ item }} state=latest update_cache=yes
         loop: [ 'gnupg', 'gcc-c++', 'patch', 'readline', 'readline-devel', 'zlib', 'zlib-devel', 'libffi-devel', 'openssl-devel', 'make', 'bzip2', 'autoconf', 'automake', 'libtool', 'bison', 'sqlite-devel' ]
+        become: true
         when: ansible_distribution == 'CentOS'
 
       - name: Install requirements for rvm to Ubuntu/Debian OS
         apt: name={{ item }} state=latest update_cache=yes
         loop: [ 'gnupg', 'gcc-c++', 'patch', 'readline', 'readline-devel', 'zlib', 'zlib-devel', 'libffi-devel', 'openssl-devel', 'make', 'bzip2', 'autoconf', 'automake', 'libtool', 'bison', 'sqlite-devel' ]
+        become: true
         when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
       - name: Import GPG Keys

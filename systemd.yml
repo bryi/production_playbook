@@ -2,34 +2,40 @@
 
     - name: Rename systemd template to application name
       command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/app_template.service /etc/systemd/system/{{ APPLICATION_NAME }}.service'
+      become: true
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
 
     - name: Configure application name in systemd file
+      become: true
       replace:
         path: '/etc/systemd/system/{{ APPLICATION_NAME }}.service'
         regexp: 'APP_NAME'
         replace: '{{ APPLICATION_NAME }}'
 
     - name: Configure application destination in systemd file
+      become: true
       replace:
         path: '/etc/systemd/system/{{ APPLICATION_NAME }}.service'
         regexp: 'APP_DEST'
         replace: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
 
     - name: Configure application deployment port in systemd file
+      become: true
       replace:
         path: '/etc/systemd/system/{{ APPLICATION_NAME }}.service'
         regexp: 'DEPLOYMENT_PORT'
         replace: '{{ DEPLOYMENT_PORT }}'
 
     - name: Move prometheus exporter systemd file to /etc/systemd
+      become: true
       command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/prom_exp.service /etc/systemd/system/prom_exp.service'
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       when: checkkey is not failed
 
     - name: Configure application destination in prometheus exporter systemd file
+      become: true
       replace:
         path: '/etc/systemd/system/prom_exp.service'
         regexp: 'APP_DEST'
@@ -37,10 +43,12 @@
       when: checkkey is not failed
 
     - name: Update systemd config in system
+      become: true
       systemd:
         daemon_reload: yes
 
     - name: Enable and start prometheus_exporter systemd service
+      become: true
       systemd:
         state: started
         name: prom_exp
@@ -48,6 +56,7 @@
       when: checkkey is not failed 
 
     - name: Enable and start application systemd service
+      become: true
       systemd:
         state: started
         name: '{{ APPLICATION_NAME }}'
@@ -57,6 +66,7 @@
         RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Restart application systemd service
+      become: true
       systemd:
         state: restarted
         name: '{{ APPLICATION_NAME }}'
@@ -66,6 +76,7 @@
         RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Check application systemd service status
+      become: true
       shell: systemctl status {{ APPLICATION_NAME }} | grep Active
       ignore_errors: yes
       register: service_output
