@@ -1,6 +1,5 @@
 ---
 - hosts: localhost
-  become: true
 
   vars:
     PRODUCTION_HOST_1: "{{ groups['production'][0] }}"
@@ -24,7 +23,6 @@
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - hosts: production
-  become: true
 
   pre_tasks:
 
