@@ -30,7 +30,13 @@
 
     - name: Import Prereq tasks
       include: prereq_tasks.yml
+      
+- hosts: production
+  become: true
+  become_user: "{{ rails_user }}"
 
+  tasks:
+  
     - name: Check installed rvm
       block:
   
@@ -40,12 +46,6 @@
       rescue:
       - name: Include install rvm tasks
         include: install_rvm.yml
-      
-- hosts: production
-  become: true
-  become_user: "{{ rails_user }}"
-
-  tasks:
       
     - name: Copy Application files to remote hosts
       synchronize:
