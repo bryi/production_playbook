@@ -30,7 +30,6 @@
       lineinfile:
         path: /root/.bashrc
         line: "export SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
-        create: yes
     
     - name: Create Rails Database
       command: bundle exec rake db:create
