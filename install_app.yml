@@ -29,6 +29,7 @@
     - name: Add detected secret key to .bashrc
       lineinfile:
         path: "/home/{{ rails_user }}/.bashrc"
+        regexp: '^export SECRET_KEY_BASE'
         line: "export SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
     
     - name: Create Rails Database
