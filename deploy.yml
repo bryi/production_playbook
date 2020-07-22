@@ -84,6 +84,9 @@
       become_user: "{{ ansible_user }}"
       include: systemd.yml
 
+    - pause:
+        seconds: 20
+
     - name: Run simple application healthchecks
       remote_user: "{{ rails_user }}"
       uri:
