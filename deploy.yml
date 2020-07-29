@@ -1,13 +1,6 @@
 ---
 - hosts: localhost
 
-  vars:
-    PRODUCTION_HOST_1: "{{ groups['production'][0] }}"
-    PRODUCTION_HOST_2: "{{ groups['production'][1] }}"
-    PRODUCTION_HOST_3: "{{ groups['production'][2] }}"
-    PRODUCTION_HOST_4: "{{ groups['production'][3] }}"
-    PRODUCTION_HOST_5: "{{ groups['production'][4] }}"
-
   pre_tasks:
 
     - name: Install epel-release to RedHat OS
@@ -26,8 +19,14 @@
 
   pre_tasks:
 
+    - command: Check existing systemd file with app
+      shell: systemctl status {{ APPLICATION_NAME }} | grep Active
+      ignore_errors: yes
+      register: app_systemd_exist
+
     - name: Import Prereq tasks
       include: prereq_tasks.yml
+      when: app_systemd_exist.rc > 0
 
     - name: Check installed rvm
       block:
@@ -35,6 +34,7 @@
       - name: Check installed rvm
         remote_user: "{{ rails_user }}"
         command: rvm list
+        when: app_systemd_exist.rc > 0
       
       rescue:
       - name: Include install rvm tasks
@@ -42,6 +42,7 @@
         remote_user: "{{ rails_user }}"
         become_user: "{{ ansible_user }}"
         include: install_rvm.yml
+        when: app_systemd_exist.rc > 0
       
 - hosts: production
   become: yes
