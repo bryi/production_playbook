@@ -1,43 +1,16 @@
 ---
-- hosts: localhost
-
-  pre_tasks:
-
-    - name: Check existing python version on host
-      raw: python --version
-      ignore_errors: yes
-      register: python_exist
-
-    - name: Install epel-release to RedHat OS
-      raw: yum install epel-release -y
-      when: 
-        - ansible_distribution == 'CentOS'
-        - python_exist.rc > 0
-
-    - name: Install needed Python versions on RedHat OS
-      raw: yum install python python-pip python3 python3-pip -y
-      when: 
-        - ansible_distribution == 'CentOS'
-        - python_exist.rc > 0
-
-    - name: Install needed Python versions on Debian/Ubuntu OS
-      raw: sudo apt-get install python python-pip python3 python3-pip -y
-      when: 
-        - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-        - python_exist.rc > 0
-
 - hosts: production
 
   pre_tasks:
 
-    - name: Check existing systemd file with app
-      shell: systemctl status {{ APPLICATION_NAME }} | grep Active
+    - name: Check existing yarn on hosts
+      shell: yarn --version
       ignore_errors: yes
-      register: app_systemd_exist
+      register: hosts_configured
 
     - name: Import Prereq tasks
       include: prereq_tasks.yml
-      when: app_systemd_exist.rc > 0
+      when: hosts_configured.rc > 0
 
     - name: Check installed rvm
       block:
@@ -45,7 +18,7 @@
       - name: Check installed rvm
         remote_user: "{{ rails_user }}"
         command: rvm list
-        when: app_systemd_exist.rc > 0
+        when: hosts_configured.rc > 0
       
       rescue:
       - name: Include install rvm tasks
@@ -53,7 +26,7 @@
         remote_user: "{{ rails_user }}"
         become_user: "{{ ansible_user }}"
         include: install_rvm.yml
-        when: app_systemd_exist.rc > 0
+        when: hosts_configured.rc > 0
       
 - hosts: production
   become: yes
