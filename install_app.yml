@@ -26,11 +26,11 @@
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
 
-    - name: Add detected secret key to .bashrc
+    - name: Add detected secret key to .env file
       lineinfile:
-        path: "/home/{{ rails_user }}/.bashrc"
-        regexp: '^export SECRET_KEY_BASE'
-        line: "export SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
+        path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/.env"
+        regexp: '^SECRET_KEY_BASE'
+        line: "SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
     
     - name: Create Rails Database
       command: bundle exec rake db:create
