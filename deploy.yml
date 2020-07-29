@@ -3,23 +3,34 @@
 
   pre_tasks:
 
+    - name: Check existing python version on host
+      raw: python --version
+      ignore_errors: yes
+      register: python_exist
+
     - name: Install epel-release to RedHat OS
       raw: yum install epel-release -y
-      when: ansible_distribution == 'CentOS'
+      when: 
+        - ansible_distribution == 'CentOS'
+        - python_exist.rc > 0
 
-    - name: Check or install needed Python versions on RedHat OS
+    - name: Install needed Python versions on RedHat OS
       raw: yum install python python-pip python3 python3-pip -y
-      when: ansible_distribution == 'CentOS'
+      when: 
+        - ansible_distribution == 'CentOS'
+        - python_exist.rc > 0
 
-    - name: Check or install needed Python versions on Debian/Ubuntu OS
+    - name: Install needed Python versions on Debian/Ubuntu OS
       raw: sudo apt-get install python python-pip python3 python3-pip -y
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      when: 
+        - ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+        - python_exist.rc > 0
 
 - hosts: production
 
   pre_tasks:
 
-    - command: Check existing systemd file with app
+    - name: Check existing systemd file with app
       shell: systemctl status {{ APPLICATION_NAME }} | grep Active
       ignore_errors: yes
       register: app_systemd_exist
