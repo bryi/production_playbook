@@ -59,6 +59,7 @@
         path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
         owner: "{{ rails_user }}"
         group: wheel
+        recurse: yes
 
     - name: Export variables tasks
       remote_user: "{{ rails_user }}"
