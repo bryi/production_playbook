@@ -7,7 +7,7 @@
       become: true
       become_user: "{{ ansible_user }}"
       include: prereq_tasks_env.yml
-      when: {{ RAILS_ENV }} == "production"
+      when: RAILS_ENV == "production"
 
 - hosts: stage
 
@@ -17,7 +17,7 @@
       become: true
       become_user: "{{ ansible_user }}"
       include: prereq_tasks_env.yml
-      when: {{ RAILS_ENV }} == "development"
+      when: RAILS_ENV == "development"
       
 - hosts: production
   become: yes
@@ -26,7 +26,7 @@
       
     - name: include tasks
       include: deploy_tasks.yml
-      when: {{ RAILS_ENV }} == "production"
+      when: RAILS_ENV == "production"
 
 - hosts: stage
   become: yes
@@ -35,4 +35,4 @@
       
     - name: include tasks
       include: deploy_tasks.yml
-      when: {{ RAILS_ENV }} == "development"
+      when: RAILS_ENV == "development"
