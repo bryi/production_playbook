@@ -21,10 +21,12 @@
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
     
     - name: Detect secret key base
-      shell: RAILS_ENV=production bundle exec rake secret
+      shell: bundle exec rake secret
       args:
         chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
       register: SECRET_KEY_BASE
+      environment:
+        RAILS_ENV: "{{ RAILS_ENV }}"
 
     - name: Add detected secret key to .env file
       lineinfile:
@@ -87,7 +89,7 @@
       block:
   
       - name: Precompile Assets
-        shell: RAILS_ENV=production bundle exec rake assets:precompile
+        shell: bundle exec rake assets:precompile
         args:
           chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
         retries: 3
@@ -103,3 +105,5 @@
         command: bundle exec rails webpacker:install
         args:
           chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+        environment:
+          RAILS_ENV: "{{ RAILS_ENV }}"
