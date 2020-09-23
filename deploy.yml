@@ -3,96 +3,36 @@
 
   pre_tasks:
 
-    - name: Check existing yarn on hosts
-      shell: yarn --version
-      ignore_errors: yes
-      register: hosts_configured
+    - name: include tasks
+      become: true
+      become_user: "{{ ansible_user }}"
+      include: prereq_tasks_env.yml
+      when: {{ RAILS_ENV }} == "production"
 
-    - name: Import Prereq tasks
-      include: prereq_tasks.yml
-      when: hosts_configured.rc > 0
+- hosts: stage
 
-    - name: Check installed rvm
-      block:
-  
-      - name: Check installed rvm
-        remote_user: "{{ rails_user }}"
-        command: rvm list
-        when: hosts_configured.rc > 0
-      
-      rescue:
-      - name: Include install rvm tasks
-        become: true
-        remote_user: "{{ rails_user }}"
-        become_user: "{{ ansible_user }}"
-        include: install_rvm.yml
-        when: hosts_configured.rc > 0
+  pre_tasks:
+
+    - name: include tasks
+      become: true
+      become_user: "{{ ansible_user }}"
+      include: prereq_tasks_env.yml
+      when: {{ RAILS_ENV }} == "development"
       
 - hosts: production
   become: yes
 
   tasks:
       
-    - name: Copy Application files to remote hosts
-      remote_user: "{{ rails_user }}"
-      synchronize:
-        src: '{{ APPLICATION_SOURCE }}'
-        dest: '{{ APPLICATION_DEST }}'
+    - name: include tasks
+      include: deploy_tasks.yml
+      when: {{ RAILS_ENV }} == "production"
 
-    - name: Export variables tasks
-      remote_user: "{{ rails_user }}"
-      include: export_variables.yml
+- hosts: stage
+  become: yes
 
-    - name: Install application
-      become: true
-      remote_user: "{{ rails_user }}"
-      become_user: "{{ ansible_user }}"
-      include: install_app.yml
-
-    - name: Check existing of prometheus exporter config file
-      remote_user: "{{ rails_user }}"
-      command: 'cat {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/config/initializers/prometheus.rb'
-      ignore_errors: yes
-      register: checkkey
-      args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
-
-    - name: Change file ownership, group and permissions
-      file:
-        path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
-        owner: "{{ rails_user }}"
-        group: wheel
-        recurse: yes
+  tasks:
       
-    - name: Copy and start systemd files
-      become: true
-      remote_user: "{{ rails_user }}"
-      become_user: "{{ ansible_user }}"
-      include: systemd.yml
-
-    - pause:
-        seconds: 20
-
-    - name: Run simple application healthchecks
-      remote_user: "{{ rails_user }}"
-      uri:
-        url: http://localhost:{{ DEPLOYMENT_PORT }}
-      
-    - name: Check prometheus metrics
-      remote_user: "{{ rails_user }}"
-      uri:
-        url: http://localhost:9394/metrics
-      when: checkkey is not failed
-
-    - name: Add prometheus node_exporter to production host
-      become: true
-      remote_user: "{{ rails_user }}"
-      become_user: "{{ ansible_user }}"
-      include: node_exporter.yml
-      when: 
-        - checkkey is not failed
-        - CONFIGURE_HOST_NODE_EXPORTERS | bool
-
-    - debug:
-        msg: Application successfully deployed
-      when: service_output.changed
+    - name: include tasks
+      include: deploy_tasks.yml
+      when: {{ RAILS_ENV }} == "development"

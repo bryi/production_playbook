@@ -1,0 +1,24 @@
+---
+
+    - name: Check existing yarn on hosts
+      shell: yarn --version
+      ignore_errors: yes
+      register: hosts_configured
+
+    - name: Import Prereq tasks
+      include: prereq_tasks.yml
+      when: hosts_configured.rc > 0
+
+    - name: Check installed rvm
+      block:
+  
+      - name: Check installed rvm
+        remote_user: "{{ rails_user }}"
+        command: rvm list
+      
+      rescue:
+      - name: Include install rvm tasks
+        become: true
+        remote_user: "{{ rails_user }}"
+        become_user: "{{ ansible_user }}"
+        include: install_rvm.yml
