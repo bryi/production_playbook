@@ -7,6 +7,12 @@
         chdir: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}"
       register: detected_ruby
 
+    - name: Export Rails env to environments
+      shell: cat .env | grep RAILS_ENV | awk -F "=" '{print $2}'
+      args:
+        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      register: RAILS_ENV
+
     - name: Export Database Name to environments
       shell: cat .env | grep DATABASE_NAME | awk -F "=" '{print $2}'
       args:
