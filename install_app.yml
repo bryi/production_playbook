@@ -33,6 +33,18 @@
         path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/.env"
         regexp: '^SECRET_KEY_BASE'
         line: "SECRET_KEY_BASE={{ SECRET_KEY_BASE.stdout }}"
+
+    - name: Add serve static option to .env file
+      lineinfile:
+        path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/.env"
+        regexp: '^RAILS_SERVE_STATIC_FILES'
+        line: "RAILS_SERVE_STATIC_FILES={{ RAILS_SERVE_STATIC_FILES }}"
+
+    - name: Add RAILS_ENV option to .env file
+      lineinfile:
+        path: "{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/.env"
+        regexp: '^RAILS_ENV'
+        line: "RAILS_ENV={{ RAILS_ENV }}"
     
     - name: Create Rails Database
       command: bundle exec rake db:create
