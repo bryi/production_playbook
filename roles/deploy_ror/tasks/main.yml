@@ -1,0 +1,9 @@
+---
+# tasks file for deploy_ror
+    - name: include pretasks
+      become: true
+      become_user: "{{ ansible_user }}"
+      include: prereq_tasks_env.yml
+
+    - name: include tasks
+      include: deploy_tasks.yml

@@ -1,10 +1,10 @@
 ---
 
     - name: Rename systemd template to application name
-      command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/app_template.service /etc/systemd/system/{{ APPLICATION_NAME }}.service'
       become: true
-      args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      copy:
+        src: app_template.service
+        dest: /etc/systemd/system/{{ APPLICATION_NAME }}.service
 
     - name: Configure application name in systemd file
       become: true
@@ -29,9 +29,9 @@
 
     - name: Move prometheus exporter systemd file to /etc/systemd
       become: true
-      command: 'mv {{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}/ansible/files/prom_exp.service /etc/systemd/system/prom_exp.service'
-      args:
-        chdir: '{{ APPLICATION_DEST }}/{{ APPLICATION_NAME }}'
+      copy:
+        src: prom_exp.service
+        dest: /etc/systemd/system/prom_exp.service
       when: checkkey is not failed
 
     - name: Configure application destination in prometheus exporter systemd file

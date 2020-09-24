@@ -1,14 +1,5 @@
 [all:vars]
 ansible_user='ANSIBLE_USER'
-rails_user='rubyworker'
-rails_user_password='goruby'
-DEPLOYMENT_PORT='APPLICATION_PORT'
-RAILS_ENV='RAILS_ENVIRONMENT'
-RAILS_SERVE_STATIC_FILES='true'
-APPLICATION_NAME='APP_NAME' 
-APPLICATION_SOURCE='WORKDIR'
-APPLICATION_DEST='/home/{{ rails_user }}'
-CONFIGURE_HOST_NODE_EXPORTERS='ANSWER'
 
 [localhost]
 127.0.0.1

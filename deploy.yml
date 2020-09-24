@@ -1,38 +1,10 @@
----
-- hosts: production
-
-  pre_tasks:
-
-    - name: include tasks
-      become: true
-      become_user: "{{ ansible_user }}"
-      include: prereq_tasks_env.yml
-      when: RAILS_ENV == "production"
-
-- hosts: stage
-
-  pre_tasks:
-
-    - name: include tasks
-      become: true
-      become_user: "{{ ansible_user }}"
-      include: prereq_tasks_env.yml
-      when: RAILS_ENV == "development"
-      
+---      
 - hosts: production
   become: yes
-
-  tasks:
-      
-    - name: include tasks
-      include: deploy_tasks.yml
-      when: RAILS_ENV == "production"
+  roles:
+    - deploy_ror
 
 - hosts: stage
   become: yes
-
-  tasks:
-      
-    - name: include tasks
-      include: deploy_tasks.yml
-      when: RAILS_ENV == "development"
+  roles:
+    - deploy_ror

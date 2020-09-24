@@ -1,0 +1,4 @@
+---
+# defaults file for deploy_ror
+rails_user: rubyworker
+rails_user_password: goruby
